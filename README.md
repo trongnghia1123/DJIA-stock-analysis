@@ -34,7 +34,7 @@ Dự án bao phủ toàn bộ quy trình xử lý dữ liệu:
 ### 1️⃣ Dữ liệu giá cổ phiếu
 
 * Dữ liệu OHLCV theo ngày
-* Thời gian: **2023 – 2026**
+* Thời gian: **Jan/2023 – Jan/2026**
 * Các trường chính:
 
   * `date, open, high, low, close, volume, ticker`
