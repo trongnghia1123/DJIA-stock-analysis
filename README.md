@@ -1,142 +1,180 @@
-# DJIA Stock Analysis Project
+# 📊 Phân tích cổ phiếu DJIA – Dự án phân tích dữ liệu đầu tư
 
-## Overview
+## 📌 Giới thiệu
 
-This project provides a comprehensive analysis of the Dow Jones Industrial Average (DJIA) stock data using Python and Jupyter Notebook. It includes data loading from a PostgreSQL database, data preprocessing, exploratory data analysis, and various financial metrics calculations such as sector-wise returns, volatility, market capitalization, and valuation ratios.
+Dự án này tập trung vào **phân tích dữ liệu giá cổ phiếu và thông tin doanh nghiệp trong bộ chỉ số Dow Jones Industrial Average (DJIA)** nhằm trả lời câu hỏi:
 
-The analysis covers key aspects of stock market performance, helping investors and analysts understand sector trends, risk-return profiles, and investment opportunities within the DJIA index.
+> **Nếu là một nhà đầu tư, nên lựa chọn ngành nghề và doanh nghiệp nào để đầu tư dựa trên dữ liệu?**
 
-## Features
+Dự án bao phủ toàn bộ quy trình xử lý dữ liệu:
 
-- **Data Loading**: Connect to PostgreSQL database and load stock price and company information data
-- **Data Preprocessing**: Merge datasets, handle date conversions, and clean data
-- **Exploratory Data Analysis**:
-  - Data information and descriptive statistics
-  - Distribution analysis of closing prices and PE ratios
-  - Sector distribution analysis
-- **Sector Analysis**:
-  - Sector overview (companies, volume, market cap)
-  - Average returns by sector
-  - Volatility analysis by sector
-  - Market capitalization distribution
-  - Price trends over time for top sectors
-- **Valuation Metrics**: PE ratio and dividend yield analysis by sector
-- **Risk-Return Analysis**: Scatter plot of return vs. volatility for sectors
-- **Investment Summary**: Comprehensive metrics for investment decision-making
+* Thu thập dữ liệu
+* Làm sạch & kiểm tra dữ liệu
+* Lưu trữ dữ liệu trong PostgreSQL
+* Phân tích dữ liệu khám phá (EDA)
+* Trực quan hóa và rút ra insight
 
-## Installation
+---
 
-### Prerequisites
+## 🧠 Mục tiêu phân tích
 
-- Python 3.8 or higher
-- PostgreSQL database with DJIA data
-- Git
+* So sánh các **ngành (sector)** theo:
 
-### Setup
+  * Tổng khối lượng giao dịch
+  * Tổng vốn hóa thị trường
+  * Giá đóng cửa trung bình
+* Phân tích **xu hướng giá theo thời gian** của các ngành
+* So sánh các **doanh nghiệp trong cùng ngành**
+* Kết hợp dữ liệu giá và dữ liệu doanh nghiệp để đưa ra góc nhìn đầu tư
 
-1. **Clone the repository**:
-   ```bash
-   git clone ...
-   ```
+---
 
-2. **Activate the virtual environment**:
-   ```bash
-   ...
-   ```
+## 🗂 Dữ liệu sử dụng
 
-3. **Install dependencies** (if not already in the virtual environment):
-   ```bash
-   pip install pandas sqlalchemy matplotlib seaborn psycopg2-binary
-   ```
+### 1️⃣ Dữ liệu giá cổ phiếu
 
-4. **Set up the database**:
-   - Ensure PostgreSQL is running
-   - Create a database named `djia_db`
-   - Update the connection string in `Analyst.ipynb` if necessary:
-     ```python
-     engine = create_engine("postgresql+psycopg2://username:password@localhost:5432/djia_db")
-     ```
+* Dữ liệu OHLCV theo ngày
+* Thời gian: **2023 – 2026**
+* Các trường chính:
 
-5. **Load data** (if needed):
-   - Use `Get_data.py` to fetch and prepare data
-   - Run `python check_data.py` to verify data integrity
+  * `date, open, high, low, close, volume, ticker`
 
-## Usage
+### 2️⃣ Dữ liệu thông tin doanh nghiệp
 
-1. **Launch Jupyter Notebook**:
-   ```bash
-   jupyter notebook
-   ```
+* Thông tin mô tả và chỉ số cơ bản:
 
-2. **Open Analyst.ipynb**:
-   - Run cells sequentially to execute the analysis
-   - Each section is clearly marked with markdown headers
+  * `symbol, name, sector, industry`
+  * `market_cap, pe_ratio, dividend_yield`
+  * `52_week_high, 52_week_low`
 
-3. **Key Outputs**:
-   - Data visualizations (histograms, bar charts, pie charts, scatter plots)
-   - Summary tables for sector analysis
-   - Investment insights based on quantitative metrics
+📌 **Nguồn dữ liệu**: Yahoo Finance (qua thư viện `yfinance`)
 
-## Project Structure
+---
 
+## 🏗️ Kiến trúc dữ liệu
+
+```text
+Yahoo Finance
+     ↓
+   CSV
+     ↓
+ PostgreSQL
+   ├── dim_company (thông tin doanh nghiệp)
+   └── fact_stock_price (giá cổ phiếu theo ngày)
+     ↓
+ Pandas DataFrame
+     ↓
+ Phân tích & Trực quan hóa
 ```
+
+### Thiết kế database
+
+* **Primary key**
+
+  * `dim_company.symbol`
+* **Foreign key**
+
+  * `fact_stock_price.ticker → dim_company.symbol`
+
+Thiết kế theo mô hình **fact – dimension** giúp thuận tiện cho phân tích.
+
+---
+
+## 🛠 Công nghệ sử dụng
+
+* Python
+* Pandas, NumPy
+* Matplotlib, Seaborn
+* PostgreSQL
+* SQLAlchemy
+* Jupyter Notebook
+* Git & GitHub
+
+---
+
+## 📊 Nội dung phân tích chính
+
+* Kiểm tra chất lượng dữ liệu (missing values, kiểu dữ liệu)
+* Phân bố ngành trong bộ DJIA
+* Tổng khối lượng giao dịch theo ngành (biểu đồ cột)
+* Tổng vốn hóa theo ngành (biểu đồ cột)
+* Giá đóng cửa trung bình theo ngành và theo thời gian (biểu đồ đường)
+* Phân tích top 5 ngành nổi bật
+* So sánh doanh nghiệp trong từng ngành
+* Nhận diện xu hướng và đặc điểm đầu tư của từng nhóm ngành
+
+---
+
+## 💡 Insight tiêu biểu
+
+* Ngành **Technology** chiếm tỷ trọng lớn nhất về số lượng công ty và vốn hóa.
+* Ngành **Financial Services** có mức giá đóng cửa trung bình cao dù số lượng công ty ít hơn.
+* Ngành có khối lượng giao dịch lớn thường có tính thanh khoản cao.
+* Một số doanh nghiệp giao dịch gần vùng giá thấp của 52 tuần, có thể là điểm quan sát đáng chú ý.
+
+---
+
+## 📁 Cấu trúc thư mục
+
+```text
 djia-stock-analysis/
 │
-├── Analyst.ipynb              # Main Jupyter notebook with analysis
-
+├── data/
+│   ├── djia_stock_price.csv
+│   ├── djia_company_info.csv
+│   ├── get_stock_price.py
+│   ├── get_companies_info.py
+│   └── check_data.py
+│
+├── sql/
+│   ├── pipeline_stock_price.py
+│   └── pipeline_companies_info.py
+│
+├── Analyst.ipynb
+├── requirements.txt
+├── README.md
+└── .gitignore
 ```
 
-## Data Sources
+---
 
-- **Stock Prices**: Historical DJIA stock prices from `djia_stock_raw_long.csv`
-- **Company Info**: Company details from `djia_company_info.csv`
-- **Database**: PostgreSQL tables `fact_stock_price` and `dim_company`
+## ▶️ Cách chạy dự án
 
-## Requirements
+### 1️⃣ Cài thư viện
 
-- **Python Libraries**:
-  - pandas
-  - sqlalchemy
-  - matplotlib
-  - seaborn
-  - psycopg2-binary
-  - jupyter
+```bash
+pip install -r requirements.txt
+```
 
-- **Database**: PostgreSQL
+### 2️⃣ Thu thập dữ liệu
 
-## Analysis Methodology
+```bash
+python data/get_stock_price.py
+python data/get_companies_info.py
+```
 
-1. **Data Integration**: Merge stock price and company data
-2. **Time Series Processing**: Convert dates and calculate daily returns
-3. **Sector Grouping**: Aggregate metrics by industry sector
-4. **Statistical Analysis**: Compute means, standard deviations, and distributions
-5. **Visualization**: Create plots for data interpretation
+### 3️⃣ Load dữ liệu vào PostgreSQL
 
-## Key Insights
+```bash
+python sql/pipeline_companies_info.py
+python sql/pipeline_stock_price.py
+```
 
-- Identify top-performing sectors by return and market cap
-- Analyze risk profiles through volatility measures
-- Evaluate valuation metrics across industries
-- Visualize sector trends and correlations
+### 4️⃣ Phân tích dữ liệu
 
-## Contributing
+```bash
+jupyter notebook Analyst.ipynb
+```
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+---
 
-## License
+## 🚀 Hướng phát triển tiếp theo
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+* Bổ sung chỉ báo kỹ thuật (Moving Average, RSI)
+* Phân tích rủi ro & biến động giá
+* Trực quan hóa bằng dashboard (Power BI / Tableau)
+* Mở rộng sang các chỉ số khác như S&P 500
 
-## Acknowledgments
-
-- Data sourced from DJIA historical records
-- Analysis inspired by financial data science practices
-- Built with Python data science ecosystem
-
-## Contact
-
-For questions or suggestions, please open an issue on GitHub.
+```bash 
+* Tại vì hơi lười nên mình có dùng AI để viết một vài chỗ trong README nhé :)) *
+```
